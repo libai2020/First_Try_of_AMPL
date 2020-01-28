@@ -1,0 +1,54 @@
+reset;
+model planning.mod;
+include init_guess.INIVAL;
+option solver ipopt;
+solve;
+
+shell ("del " & ("tf.txt"));
+shell ("del " & ("x.txt"));
+shell ("del " & ("y.txt"));
+shell ("del " & ("theta.txt"));
+shell ("del " & ("v.txt"));
+shell ("del " & ("phy.txt"));
+shell ("del " & ("a.txt"));
+shell ("del " & ("w.txt"));
+
+for {i in I} {
+	for {j in K} {
+		printf "%5.3f; ", x[i,j] >>("x.txt");
+		printf "%5.3f; ", y[i,j] >>("y.txt");
+		printf "%5.3f; ", theta[i,j] >>("theta.txt");
+		printf "%5.3f; ", v[i,j] >>("v.txt");
+		printf "%5.3f; ", phy[i,j] >>("phy.txt");
+	}
+	for {j in J} {
+		printf "%5.3f; ", a[i,j] >>("a.txt");
+		printf "%5.3f; ", w[i,j] >>("w.txt");
+	}
+}
+printf "%5.3f; ", tf >>("tf.txt");
+close ("tf.txt");
+close ("x.txt");
+close ("y.txt");
+close ("theta.txt");
+close ("v.txt");
+close ("phy.txt");
+close ("a.txt");
+close ("w.txt");
+
+shell ("del " & ("init_guess.INIVAL"));
+for {i in I} {
+	for {j in K} {
+		printf "let x[%d,%d]:=%5.3f;\n", i, j, x[i,j] >>("init_guess.INIVAL");
+		printf "let y[%d,%d]:=%5.3f;\n", i, j, y[i,j] >>("init_guess.INIVAL");
+		printf "let theta[%d,%d]:=%5.3f;\n", i, j, theta[i,j] >>("init_guess.INIVAL");
+		printf "let v[%d,%d]:=%5.3f;\n", i, j, v[i,j] >>("init_guess.INIVAL");
+		printf "let phy[%d,%d]:=%5.3f;\n", i, j, phy[i,j] >>("init_guess.INIVAL");
+	}	
+	for {j in J} {
+		printf "let a[%d,%d]:=%5.3f;\n", i, j, a[i,j] >>("init_guess.INIVAL");
+		printf "let w[%d,%d]:=%5.3f;\n", i, j, w[i,j] >>("init_guess.INIVAL");
+	}
+}
+printf "let tf:=%5.3f;\n", tf >>("init_guess.INIVAL");
+close ("init_guess.INIVAL");
